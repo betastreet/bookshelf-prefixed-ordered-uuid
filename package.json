@@ -1,0 +1,23 @@
+{
+  "name": "bookshelf-prefixed-ordered-uuid",
+  "version": "0.1.0",
+  "description": "Support ordered UUID's prefixed with a string as the primary key for your Bookshelf models.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ordered",
+    "uuid",
+    "guid",
+    "binary",
+    "bookshelf",
+    "prefix",
+    "knex"
+  ],
+  "author": "Paul Leduc <leduc.paul@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "ordered-uuid": "^1.0.0"
+  },
+}
