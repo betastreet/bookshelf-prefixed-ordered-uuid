@@ -35,7 +35,7 @@ module.exports = (bookshelf) => {
         initialize: function () {
             modelPrototype.initialize.call(this);
 
-            if (this.orderedUuid === true) {
+            if (this.orderedUuids && Array.isArray(this.orderedUuids)) {
                 this.on('saving', this.writeDefaults);
                 this.on('fetching', this.writeDefaults);
                 this.on('saved', this.readDefaults);
@@ -45,18 +45,22 @@ module.exports = (bookshelf) => {
         },
 
         writeDefaults: function (model, columns, options) {
-            if (!this.attributes.id) this.set('id', bookshelf.Model.generateUuid(this.orderedUuidPrefix));
-            if (this.attributes.id) this.set('id', bookshelf.Model.prefixedUuidToBinary(this.attributes.id, (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null)));
+            this.orderedUuids.forEach((column) => {
+                if (!this.attributes[column]) this.set(column, bookshelf.Model.generateUuid(this.orderedUuidPrefix));
+                if (this.attributes[column]) this.set(column, bookshelf.Model.prefixedUuidToBinary(this.attributes[column], (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null)));
+            });
             // hackey work-around
             if (this.orderedUuidPrefix
                 && options.query
                 && options.query._statements
                 && options.query._statements.length) {
                 options.query._statements = options.query._statements.map(function (stmt) {
-                    if (stmt.column === `${this.tableName}.id` && stmt.value) {
-                        stmt.value = bookshelf.Model.prefixedUuidToBinary(stmt.value,
-                            (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null));
-                    }
+                    this.orderedUuids.forEach((column) => {
+                        if (stmt.column === `${this.tableName}.${column}` && stmt.value) {
+                            stmt.value = bookshelf.Model.prefixedUuidToBinary(stmt.value,
+                                (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null));
+                        }
+                    });
                     return stmt;
                 }, this);
             }
@@ -64,7 +68,9 @@ module.exports = (bookshelf) => {
         },
 
         readDefaults: function () {
-            if (this.attributes.id) this.set('id', bookshelf.Model.binaryToPrefixedUuid(this.attributes.id, (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null)));
+            this.orderedUuids.forEach((column) => {
+                if (this.attributes[column]) this.set(column, bookshelf.Model.binaryToPrefixedUuid(this.attributes[column], (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null)));
+            });
         },
 
         readCollectionDefaults: function (collection) {
