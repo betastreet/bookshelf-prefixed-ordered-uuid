@@ -20,7 +20,7 @@ bookshelf.plugin(require('bookshelf-prefixed-ordered-uuid'));
 // Enable it on your models
 let User = bookshelf.Model.extend({
     tableName: 'users',
-    orderedUuid: true,
+    orderedUuids: ['id'],    // you can specify multiple columns (great for relationship UUID's)
     orderedUuidPrefix: 'UR', // optional, defaults to no prefix
 });
 ```

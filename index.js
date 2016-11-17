@@ -38,19 +38,22 @@ module.exports = (bookshelf) => {
             if (this.orderedUuids && Array.isArray(this.orderedUuids)) {
                 this.on('saving', this.writeDefaults);
                 this.on('fetching', this.writeDefaults);
+                this.on('destroying', this.writeDefaults);
                 this.on('saved', this.readDefaults);
                 this.on('fetched', this.readDefaults);
+                this.on('destroyed', this.readDefaults);
                 this.on('fetched:collection', this.readCollectionDefaults);
             }
         },
 
         writeDefaults: function (model, columns, options) {
             this.orderedUuids.forEach((column) => {
-                if (!this.attributes[column]) this.set(column, bookshelf.Model.generateUuid(this.orderedUuidPrefix));
+                if (!this.attributes[column] && column === this.idAttribute) this.set(column, bookshelf.Model.generateUuid(this.orderedUuidPrefix));
                 if (this.attributes[column]) this.set(column, bookshelf.Model.prefixedUuidToBinary(this.attributes[column], (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null)));
             });
-            // hackey work-around
+            // hackey work-around to modify the knex statement's where clauses to the applicable converted valuess
             if (this.orderedUuidPrefix
+                && options
                 && options.query
                 && options.query._statements
                 && options.query._statements.length) {
