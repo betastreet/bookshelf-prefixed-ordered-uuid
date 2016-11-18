@@ -43,6 +43,7 @@ module.exports = (bookshelf) => {
                 this.on('fetched', this.readDefaults);
                 this.on('destroyed', this.readDefaults);
                 this.on('fetched:collection', this.readCollectionDefaults);
+                this.on('fetching:collection', this.writeCollectionDefaults);
             }
         },
 
@@ -52,18 +53,20 @@ module.exports = (bookshelf) => {
                 if (this.attributes[column]) this.set(column, bookshelf.Model.prefixedUuidToBinary(this.attributes[column], (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null)));
             });
             // hackey work-around to modify the knex statement's where clauses to the applicable converted valuess
-            if (this.orderedUuidPrefix
+            if (this.orderedUuids
                 && options
                 && options.query
                 && options.query._statements
                 && options.query._statements.length) {
                 options.query._statements = options.query._statements.map(function (stmt) {
-                    this.orderedUuids.forEach((column) => {
-                        if (stmt.column === `${this.tableName}.${column}` && stmt.value) {
-                            stmt.value = bookshelf.Model.prefixedUuidToBinary(stmt.value,
-                                (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null));
-                        }
-                    });
+                    if (!Buffer.isBuffer(stmt.value)) {
+                        this.orderedUuids.forEach((column) => {
+                            if ((stmt.column === `${this.tableName}.${column}` || stmt.column === column) && stmt.value) {
+                                stmt.value = bookshelf.Model.prefixedUuidToBinary(stmt.value,
+                                    (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null));
+                            }
+                        });
+                    }
                     return stmt;
                 }, this);
             }
@@ -80,6 +83,27 @@ module.exports = (bookshelf) => {
             collection.each(function (model) {
                 model.readDefaults();
             });
+        },
+
+        writeCollectionDefaults: function (collection, columns, options) {
+            // hackey work-around to modify the knex statement's where clauses to the applicable converted valuess
+            if (this.orderedUuids
+                && options
+                && options.query
+                && options.query._statements
+                && options.query._statements.length) {
+                options.query._statements = options.query._statements.map(function (stmt) {
+                    if (!Buffer.isBuffer(stmt.value)) {
+                        this.orderedUuids.forEach((column) => {
+                            if ((stmt.column === `${this.tableName}.${column}` || stmt.column === column) && stmt.value) {
+                                stmt.value = bookshelf.Model.prefixedUuidToBinary(stmt.value,
+                                    (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null));
+                            }
+                        });
+                    }
+                    return stmt;
+                }, this);
+            }
         },
     });
 };
