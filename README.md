@@ -56,3 +56,19 @@ new User({ id: "UR470300d5a23108cbba1a410d65dd05ff" })
             // },
         });
 ```
+
+There are other helpful methods included as well:
+
+```javascript
+// returns a prefixed UUID
+let uuid = bookshelf.Model.generateUuid('BO');
+
+// returns a regex for validating prefixed UUID's
+let regex = bookshelf.Model.prefixedUuidRegex('UR');
+
+// converts a prefixed UUID into binary
+let uuidBinary = bookshelf.Model.prefixedUuidToBinary(uuid, 2);
+
+// converts a prefixed UUID binary into a string
+let uuidBinary = bookshelf.Model.binaryToPrefixedUuid(uuidBinary, 2);
+```
