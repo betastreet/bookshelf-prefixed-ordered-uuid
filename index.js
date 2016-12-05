@@ -71,6 +71,7 @@ module.exports = (bookshelf) => {
             this.mapKnexQuery(options, function (obj, stmt) {
                 obj.orderedUuids.forEach((column) => {
                     if (!Buffer.isBuffer(stmt.value)
+                        && (!Array.isArray(stmt.value) || !Buffer.isBuffer(stmt.value[0]))
                         && (stmt.column === `${obj.tableName}.${column}` || stmt.column === column)
                         && stmt.value) {
                         stmt.value = bookshelf.Model.prefixedUuidToBinary(stmt.value,
