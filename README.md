@@ -57,7 +57,7 @@ new User({ id: "UR470300d5a23108cbba1a410d65dd05ff" })
         });
 ```
 
-There are other helpful methods included as well:
+## Useful Methods
 
 ```javascript
 // returns a prefixed UUID
@@ -71,4 +71,51 @@ let uuidBinary = bookshelf.Model.prefixedUuidToBinary(uuid, 2);
 
 // converts a prefixed UUID binary into a string
 let uuidBinary = bookshelf.Model.binaryToPrefixedUuid(uuidBinary, 2);
+```
+
+### MySQL Functions
+
+Here are some custom MySQL functions for generating and converting Prefixed Ordered UUID's (these are built for prefix lengths of 2):
+
+```sql
+DELIMITER //
+CREATE DEFINER=`user`@`localhost` FUNCTION `POUUID`(prefix CHAR(2), uuid BINARY(36))
+RETURNS BINARY(18) DETERMINISTIC
+RETURN CONCAT(CONVERT(prefix, BINARY), UNHEX(CONCAT(SUBSTR(uuid, 15, 4),SUBSTR(uuid, 10, 4),SUBSTR(uuid, 1, 8),SUBSTR(uuid, 20, 4),SUBSTR(uuid, 25))));
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE DEFINER=`user`@`localhost` FUNCTION `FROM_POUUID`(pouuid BINARY(18))
+RETURNS CHAR(38) DETERMINISTIC
+RETURN CONCAT(SUBSTR(pouuid, 1, 2), LOWER(HEX(SUBSTR(pouuid, 3))));
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE DEFINER=`user`@`localhost` FUNCTION `TO_POUUID`(pouuid CHAR(38))
+RETURNS BINARY(18) DETERMINISTIC
+RETURN CONCAT(SUBSTR(pouuid, 1, 2), UNHEX(SUBSTR(pouuid, 3)));
+//
+DELIMITER ;
+```
+
+## MySQL Function Usage
+
+Generate new Prefixed Ordered UUID binary:
+
+```sql
+INSERT INTO users (id, name) VALUES (POUUID('UR', uuid()), 'Bim Jimbo');
+```
+
+Convert Prefixed Ordered UUID binary to string:
+
+```sql
+SELECT FROM_POUUID(id) FROM users;
+```
+
+Convert Prefixed Ordered UUID string to binary:
+
+```sql
+SELECT * FROM users WHERE id = TO_POUUID("UR407cbd87e831746980ac705c6e7e176c");
 ```
