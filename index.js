@@ -13,21 +13,29 @@ module.exports = (bookshelf) => {
     };
 
     bookshelf.Model.prefixedUuidToBinary = function (uuid, orderedUuidPrefixLength) {
-        if (orderedUuidPrefixLength) {
-            const prefix = uuid.substring(0, orderedUuidPrefixLength || 2);
-            const uid = uuid.substring(orderedUuidPrefixLength || 2);
-            return Buffer.concat([new Buffer(prefix.toString('binary'), 'binary'), new Buffer(uid, 'hex')]);
+        try {
+            if (orderedUuidPrefixLength) {
+                const prefix = uuid.substring(0, orderedUuidPrefixLength || 2);
+                const uid = uuid.substring(orderedUuidPrefixLength || 2);
+                return Buffer.concat([new Buffer(prefix.toString('binary'), 'binary'), new Buffer(uid, 'hex')]);
+            }
+            return new Buffer(uuid, 'hex');
+        } catch (err) {
+            throw new Error('Invalid UUID to convert: ' + uuid);
         }
-        return new Buffer(uuid, 'hex');
     };
 
     bookshelf.Model.binaryToPrefixedUuid = function (buff, orderedUuidPrefixLength) {
-        if (orderedUuidPrefixLength) {
-            const prefix = buff.slice(0, orderedUuidPrefixLength || 2);
-            const uid = buff.slice(orderedUuidPrefixLength || 2);
-            return prefix.toString() + uid.toString('hex');
+        try {
+            if (orderedUuidPrefixLength) {
+                const prefix = buff.slice(0, orderedUuidPrefixLength || 2);
+                const uid = buff.slice(orderedUuidPrefixLength || 2);
+                return prefix.toString() + uid.toString('hex');
+            }
+            return buff.toString('hex');
+        } catch (err) {
+            throw new Error('Invalid binary UUID to convert.');
         }
-        return buff.toString('hex');
     };
 
     bookshelf.Model.prefixedUuidRegex = function (orderedUuidPrefix) {
