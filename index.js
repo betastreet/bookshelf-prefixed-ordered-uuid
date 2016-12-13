@@ -48,7 +48,7 @@ module.exports = (bookshelf) => {
         initialize: function () {
             modelPrototype.initialize.call(this);
 
-            if (this.orderedUuids && Array.isArray(this.orderedUuids)) {
+            if (this.orderedUuids && typeof this.orderedUuids === 'object') {
                 this.isNewOverride = this.attributes[this.idAttribute] == null;
                 this.on('saving', this.writeDefaults);
                 this.on('fetching', this.writeDefaults);
@@ -71,29 +71,32 @@ module.exports = (bookshelf) => {
         },
 
         writeDefaults: function (model, columns, options) {
-            this.orderedUuids.forEach((column) => {
-                if (!this.attributes[column] && column === this.idAttribute) this.set(column, bookshelf.Model.generateUuid(this.orderedUuidPrefix));
-                if (this.attributes[column]) this.set(column, bookshelf.Model.prefixedUuidToBinary(this.attributes[column], (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null)));
+            Object.keys(this.orderedUuids).forEach((column) => {
+                if (!this.attributes[column] && column === this.idAttribute) this.set(column, bookshelf.Model.generateUuid(this.orderedUuids[column]));
+                if (this.attributes[column]) this.set(column, bookshelf.Model.prefixedUuidToBinary(this.attributes[column], (this.orderedUuids[column] ? this.orderedUuids[column].length : null)));
             });
             // hackey work-around to modify the knex statement's where clauses to the applicable converted values
             this.mapKnexQuery(options, function (obj, stmt) {
-                obj.orderedUuids.forEach((column) => {
+                Object.keys(obj.orderedUuids).forEach((column) => {
                     if (!Buffer.isBuffer(stmt.value)
                         && (!Array.isArray(stmt.value) || !Buffer.isBuffer(stmt.value[0]))
                         && (stmt.column === `${obj.tableName}.${column}` || stmt.column === column)
                         && stmt.value) {
+                        if (stmt.value) {
+
+                        }
                         stmt.value = bookshelf.Model.prefixedUuidToBinary(stmt.value,
-                            (obj.orderedUuidPrefix ? obj.orderedUuidPrefix.length : null));
+                            (obj.orderedUuids[column] ? obj.orderedUuids[column].length : null));
                     }
                 });
                 return stmt;
             });
             // this switches update fields with the applicable converted values
             if (columns && typeof columns === 'object') {
-                this.orderedUuids.forEach((column) => {
+                Object.keys(this.orderedUuids).forEach((column) => {
                     if (columns.hasOwnProperty(column)) {
                         columns[column] = bookshelf.Model.prefixedUuidToBinary(columns[column],
-                            (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null));
+                            (this.orderedUuids[column] ? this.orderedUuids[column].length : null));
                     }
                 });
             }
@@ -101,8 +104,8 @@ module.exports = (bookshelf) => {
         },
 
         readDefaults: function () {
-            this.orderedUuids.forEach((column) => {
-                if (this.attributes[column]) this.set(column, bookshelf.Model.binaryToPrefixedUuid(this.attributes[column], (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : null)));
+            Object.keys(this.orderedUuids).forEach((column) => {
+                if (this.attributes[column]) this.set(column, bookshelf.Model.binaryToPrefixedUuid(this.attributes[column], (this.orderedUuids[column] ? this.orderedUuids[column].length : null)));
             });
         },
 
@@ -116,20 +119,20 @@ module.exports = (bookshelf) => {
             // hackey work-around to modify the knex statement's where clauses to the applicable converted values
             options = this.mapKnexQuery(options, function (obj, stmt) {
                 if (!Buffer.isBuffer(stmt.value)) {
-                    obj.orderedUuids.forEach((column) => {
+                    Object.keys(obj.orderedUuids).forEach((column) => {
                         if (Array.isArray(stmt.value)) {
                             const stmtValues = [];
                             stmt.value.forEach((stmtValue) => {
                                 if ((stmt.column === `${obj.tableName}.${column}` || stmt.column === column) && stmtValue) {
                                     const generatedId = bookshelf.Model.prefixedUuidToBinary(stmtValue,
-                                        (obj.orderedUuidPrefix ? obj.orderedUuidPrefix.length : null));
+                                        (obj.orderedUuids[column] ? obj.orderedUuids[column].length : null));
                                     stmtValues.push(generatedId);
                                 }
                             });
                             stmt.value = stmtValues;
                         } else if ((stmt.column === `${obj.tableName}.${column}` || stmt.column === column) && stmt.value) {
                             stmt.value = bookshelf.Model.prefixedUuidToBinary(stmt.value,
-                                (obj.orderedUuidPrefix ? obj.orderedUuidPrefix.length : null));
+                                (obj.orderedUuids[column] ? obj.orderedUuids[column].length : null));
                         }
                     });
                 }
@@ -151,7 +154,7 @@ module.exports = (bookshelf) => {
         },
 
         prefixedUuidRegex: function () {
-            return new RegExp('/^[A-Z]{' + (this.orderedUuidPrefix ? this.orderedUuidPrefix.length : 0) + '}[a-z0-9]{32}$/');
+            return new RegExp('/^[A-Z]{' + (this.orderedUuids[this.idAttribute] ? this.orderedUuids[this.idAttribute].length : 0) + '}[a-z0-9]{32}$/');
         },
     });
 };
