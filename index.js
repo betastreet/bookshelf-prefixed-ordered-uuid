@@ -51,7 +51,7 @@ module.exports = (bookshelf) => {
             modelPrototype.initialize.call(this);
 
             if (this.orderedUuids && typeof this.orderedUuids === 'object') {
-                this.isNewOverride = this.attributes[this.idAttribute] == null;
+                this.isNewOverride = !this.attributes[this.idAttribute];
                 this.on('saving', this.writeDefaults);
                 this.on('fetching', this.writeDefaults);
                 this.on('destroying', this.writeDefaults);
@@ -69,7 +69,7 @@ module.exports = (bookshelf) => {
             if (this.orderedUuids) {
                 return this.isNewOverride;
             }
-            return this.attributes[this.idAttribute] == null;
+            return !this.attributes[this.idAttribute];
         },
 
         writeDefaults: function (model, columns, options) {
@@ -84,9 +84,6 @@ module.exports = (bookshelf) => {
                         && (!Array.isArray(stmt.value) || !Buffer.isBuffer(stmt.value[0]))
                         && (stmt.column === `${obj.tableName}.${column}` || stmt.column === column)
                         && stmt.value) {
-                        if (stmt.value) {
-
-                        }
                         stmt.value = bookshelf.Model.prefixedUuidToBinary(stmt.value,
                             (obj.orderedUuids[column] ? obj.orderedUuids[column].length : null));
                     }
@@ -158,6 +155,6 @@ module.exports = (bookshelf) => {
         prefixedUuidRegex: function (attribute) {
             if (!attribute && this.orderedUuids[this.idAttribute]) attribute = this.idAttribute;
             return new RegExp('^' + (this.orderedUuids[attribute] || '') + '[a-z0-9]{32}$');
-        },
+        }
     });
 };
