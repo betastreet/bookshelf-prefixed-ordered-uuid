@@ -1,3 +1,5 @@
+'use strict'
+
 const OrderedUUID = require('ordered-uuid');
 
 /**
@@ -153,8 +155,9 @@ module.exports = (bookshelf) => {
             return knexQuery;
         },
 
-        prefixedUuidRegex: function () {
-            return new RegExp('/^[A-Z]{' + (this.orderedUuids[this.idAttribute] ? this.orderedUuids[this.idAttribute].length : 0) + '}[a-z0-9]{32}$/');
+        prefixedUuidRegex: function (attribute) {
+            if (!attribute && this.orderedUuids[this.idAttribute]) attribute = this.idAttribute;
+            return new RegExp('^' + (this.orderedUuids[attribute] || '') + '[a-z0-9]{32}$');
         },
     });
 };

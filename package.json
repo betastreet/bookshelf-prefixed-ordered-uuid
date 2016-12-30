@@ -1,11 +1,7 @@
 {
   "name": "bookshelf-prefixed-ordered-uuid",
   "version": "1.1.3",
-  "description": "Support ordered UUID's prefixed with a string as the primary key for your Bookshelf models.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "Support ordered UUID's prefixed with a string as properties for your Bookshelf models.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/paulleduc/bookshelf-prefixed-ordered-uuid"
@@ -20,12 +16,41 @@
     "knex"
   ],
   "author": "Paul Leduc <leduc.paul@gmail.com>",
+  "maintainers": [
+    {
+      "email": "leduc.paul@gmail.com",
+      "name": "paulleduc"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/paulleduc/bookshelf-prefixed-ordered-uuid/issues"
   },
   "homepage": "https://github.com/paulleduc/bookshelf-prefixed-ordered-uuid#readme",
+  "engines": {
+    "node": ">= 4"
+  },
   "dependencies": {
     "ordered-uuid": "^1.0.0"
+  },
+  "devDependencies": {
+    "bookshelf": ">=0.0.0 <1.0.0",
+    "codeclimate-test-reporter": "^0.4.0",
+    "jest": "^16.0.2",
+    "knex": ">=0.6.10 <0.12.0",
+    "sqlite": "^2.2.4",
+    "sqlite3": "^3.1.8"
+  },
+  "peerDependencies": {
+    "bookshelf": "0.x.x"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test-cov": "npm test -- --coverage",
+    "code-climate": "codeclimate-test-reporter < coverage/lcov.info",
+    "knex": "knex --knexfile test/db/knexfile.js",
+    "migrate": "npm run knex -- migrate:latest",
+    "seed": "npm run knex -- seed:run"
   }
 }
