@@ -22,6 +22,18 @@ exports.seed = (knex, Promise) => {
             last_name: 'Herman',
             email: 'Emmie.Stehr@yahoo.com'
         },
+        {
+            id: bookshelf.Model.prefixedUuidToBinary('UR11e72f23a23c6f809ff3317dc0baaeca', 2),
+            first_name: 'Leon',
+            last_name: 'Marten',
+            email: 'leon.marten@yahoo.com'
+        },
+        {
+            id: bookshelf.Model.prefixedUuidToBinary('UR11e72f23a23c6f889ff3317dc0baaeca', 2),
+            first_name: 'German',
+            last_name: 'Smith',
+            email: 'g.smith@yahoo.com'
+        },
     ];
 
     return Promise.join(

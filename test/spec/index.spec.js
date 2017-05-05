@@ -119,4 +119,19 @@ describe('database querying', () => {
         });
     });
 
+    // get user articles
+    it('should not be duplicates in fetch', (done) => {
+        User.fetchAll({ withRelated: ['articles'] }).then((models) => {
+            const jsonModels = models.toJSON();
+            jsonModels.reduce((acc, cur) => {
+                const key = cur.id.toString('hex');
+                if (key in acc) {
+                    throw `Duplicate found ${key}`;
+                }
+                acc[key] = cur;
+                return acc;
+            }, {});
+            done();
+        });
+    });
 });
