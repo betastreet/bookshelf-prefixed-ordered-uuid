@@ -1,6 +1,7 @@
 'use strict'
 
 const OrderedUUID = require('ordered-uuid');
+const collection = require('./collection.js');
 
 /**
  * A function that can be used as a plugin for bookshelf
@@ -43,6 +44,14 @@ module.exports = (bookshelf) => {
     bookshelf.Model.prefixedUuidRegex = function (orderedUuidPrefix) {
         return new RegExp('^' + (orderedUuidPrefix || '') + '[a-z0-9]{32}$');
     };
+
+    bookshelf.Collection.prototype._reset = collection.prototype._reset;
+
+    bookshelf.Collection.prototype.set = collection.prototype.set;
+
+    bookshelf.Collection.prototype.remove = collection.prototype.remove;
+
+    bookshelf.Collection.prototype.get = collection.prototype.get;
 
     // Extends the default model class
     bookshelf.Model = bookshelf.Model.extend({
