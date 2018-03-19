@@ -16,6 +16,9 @@ module.exports = (bookshelf) => {
     };
 
     bookshelf.Model.prefixedUuidToBinary = function (uuid, orderedUuidPrefixLength) {
+        if (uuid === null) {
+            return null;
+        }
         try {
             if (orderedUuidPrefixLength) {
                 const prefix = uuid.substring(0, orderedUuidPrefixLength || 2);
