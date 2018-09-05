@@ -131,13 +131,15 @@ module.exports = (bookshelf) => {
             options = this.mapKnexQuery(options, function (obj, stmt) {
                 if (!Buffer.isBuffer(stmt.value)) {
                     Object.keys(obj.orderedUuids).forEach((column) => {
-                        if (Array.isArray(stmt.value)) {
+                        if (Array.isArray(stmt.value) && (stmt.column === `${obj.tableName}.${column}` || stmt.column === column)) {
                             const stmtValues = [];
                             stmt.value.forEach((stmtValue) => {
-                                if ((stmt.column === `${obj.tableName}.${column}` || stmt.column === column) && stmtValue) {
+                                if (stmtValue && !Buffer.isBuffer(stmtValue)) {
                                     const generatedId = bookshelf.Model.prefixedUuidToBinary(stmtValue,
                                         (obj.orderedUuids[column] ? obj.orderedUuids[column].length : null));
                                     stmtValues.push(generatedId);
+                                } else if (stmtValue) {
+                                    stmtValues.push(stmtValue);
                                 }
                             });
                             stmt.value = stmtValues;
