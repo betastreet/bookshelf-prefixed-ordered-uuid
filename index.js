@@ -134,10 +134,12 @@ module.exports = (bookshelf) => {
                         if (Array.isArray(stmt.value) && (stmt.column === `${obj.tableName}.${column}` || stmt.column === column)) {
                             const stmtValues = [];
                             stmt.value.forEach((stmtValue) => {
-                                if (stmtValue) {
+                                if (stmtValue && !Buffer.isBuffer(stmtValue)) {
                                     const generatedId = bookshelf.Model.prefixedUuidToBinary(stmtValue,
                                         (obj.orderedUuids[column] ? obj.orderedUuids[column].length : null));
                                     stmtValues.push(generatedId);
+                                } else if (stmtValue) {
+                                    stmtValues.push(stmtValue);
                                 }
                             });
                             stmt.value = stmtValues;
