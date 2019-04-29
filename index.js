@@ -106,7 +106,7 @@ module.exports = (bookshelf) => {
             if ((model && model.changed) || (columns && typeof columns === 'object')) {
                 const src = (model && model.changed) || columns;
                 Object.keys(this.orderedUuids).forEach((column) => {
-                    if (src.hasOwnProperty(column)) {
+                    if (column in src && !Buffer.isBuffer(src[column])) {
                       src[column] = bookshelf.Model.prefixedUuidToBinary(src[column],
                             (this.orderedUuids[column] ? this.orderedUuids[column].length : null));
                     }
