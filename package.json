@@ -1,6 +1,6 @@
 {
   "name": "bookshelf-prefixed-ordered-uuid",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Support ordered UUID's prefixed with a string as properties for your Bookshelf models.",
   "repository": {
     "type": "git",
