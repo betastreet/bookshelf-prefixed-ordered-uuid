@@ -103,10 +103,11 @@ module.exports = (bookshelf) => {
                 return stmt;
             });
             // this switches update fields with the applicable converted values
-            if (columns && typeof columns === 'object') {
+            if ((model && model.changed) || (columns && typeof columns === 'object')) {
+                const src = (model && model.changed) || columns;
                 Object.keys(this.orderedUuids).forEach((column) => {
-                    if (columns.hasOwnProperty(column)) {
-                        columns[column] = bookshelf.Model.prefixedUuidToBinary(columns[column],
+                    if (src.hasOwnProperty(column)) {
+                      src[column] = bookshelf.Model.prefixedUuidToBinary(src[column],
                             (this.orderedUuids[column] ? this.orderedUuids[column].length : null));
                     }
                 });
