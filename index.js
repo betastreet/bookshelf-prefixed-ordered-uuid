@@ -84,7 +84,7 @@ module.exports = (bookshelf) => {
             return !this.attributes[this.idAttribute];
         },
 
-        writeDefaults: function (model, columns, options) {
+        writeDefaults: function (model, attrs, options) {
             Object.keys(this.orderedUuids).forEach((column) => {
                 if (!this.attributes[column] && column === this.idAttribute) this.set(column, bookshelf.Model.generateUuid(this.orderedUuids[column]));
                 if (this.attributes[column]) this.set(column, bookshelf.Model.prefixedUuidToBinary(this.attributes[column], (this.orderedUuids[column] ? this.orderedUuids[column].length : null)));
@@ -103,11 +103,10 @@ module.exports = (bookshelf) => {
                 return stmt;
             });
             // this switches update fields with the applicable converted values
-            if ((model && model.changed) || (columns && typeof columns === 'object')) {
-                const src = (model && model.changed) || columns;
+            if (attrs && typeof attrs === 'object') {
                 Object.keys(this.orderedUuids).forEach((column) => {
-                    if (column in src && !Buffer.isBuffer(src[column])) {
-                      src[column] = bookshelf.Model.prefixedUuidToBinary(src[column],
+                    if (columns.hasOwnProperty(column)) {
+                        columns[column] = bookshelf.Model.prefixedUuidToBinary(columns[column],
                             (this.orderedUuids[column] ? this.orderedUuids[column].length : null));
                     }
                 });
