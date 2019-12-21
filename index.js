@@ -19,6 +19,9 @@ module.exports = (bookshelf) => {
         if (uuid === null) {
             return null;
         }
+        if (Buffer.isBuffer(uuid) && uuid.length === 16 + orderedUuidPrefixLength) {
+            return uuid;
+        }
         try {
             if (orderedUuidPrefixLength) {
                 const prefix = uuid.substring(0, orderedUuidPrefixLength || 2);
@@ -32,6 +35,9 @@ module.exports = (bookshelf) => {
     };
 
     bookshelf.Model.binaryToPrefixedUuid = function (buff, orderedUuidPrefixLength) {
+        if (typeof(buff) === 'string' && buff.length === 32 + orderedUuidPrefixLength) {
+            return buff;
+        }
         try {
             if (orderedUuidPrefixLength) {
                 const prefix = buff.slice(0, orderedUuidPrefixLength || 2);
@@ -105,8 +111,8 @@ module.exports = (bookshelf) => {
             // this switches update fields with the applicable converted values
             if (attrs && typeof attrs === 'object') {
                 Object.keys(this.orderedUuids).forEach((column) => {
-                    if (columns.hasOwnProperty(column)) {
-                        columns[column] = bookshelf.Model.prefixedUuidToBinary(columns[column],
+                    if (attrs.hasOwnProperty(column)) {
+                        attrs[column] = bookshelf.Model.prefixedUuidToBinary(attrs[column],
                             (this.orderedUuids[column] ? this.orderedUuids[column].length : null));
                     }
                 });
