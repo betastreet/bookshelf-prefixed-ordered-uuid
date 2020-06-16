@@ -1,7 +1,7 @@
 # bookshelf-prefixed-ordered-uuid
 [![Version](https://badge.fury.io/js/bookshelf-prefixed-ordered-uuid.svg)](http://badge.fury.io/js/bookshelf-prefixed-ordered-uuid)
 [![Code Climate](https://codeclimate.com/github/paulleduc/bookshelf-prefixed-ordered-uuid/badges/gpa.svg)](https://codeclimate.com/github/paulleduc/bookshelf-prefixed-ordered-uuid)
-[![Build Status](https://travis-ci.org/paulleduc/bookshelf-prefixed-ordered-uuid.svg?branch=master)](https://travis-ci.org/paulleduc/bookshelf-prefixed-ordered-uuid)
+[![Build Status](https://travis-ci.org/paulleduc/bookshelf-prefixed-ordered-uuid.svg?branch=main)](https://travis-ci.org/paulleduc/bookshelf-prefixed-ordered-uuid)
 [![Test Coverage](https://codeclimate.com/github/paulleduc/bookshelf-prefixed-ordered-uuid/badges/coverage.svg)](https://codeclimate.com/github/paulleduc/bookshelf-prefixed-ordered-uuid/coverage)
 [![Downloads](http://img.shields.io/npm/dm/bookshelf-prefixed-ordered-uuid.svg)](https://www.npmjs.com/package/bookshelf-prefixed-ordered-uuid)
 
