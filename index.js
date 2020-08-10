@@ -102,7 +102,7 @@ module.exports = (bookshelf) => {
             // this switches update fields with the applicable converted values
             if (attrs && typeof attrs === 'object') {
                 Object.keys(this.orderedUuids).forEach((column) => {
-                    if (attrs.hasOwnProperty(column)) {
+                    if (Object.hasOwnProperty.bind(attrs)(column)) {
                         attrs[column] = bookshelf.Model.prefixedUuidToBinary(attrs[column],
                             (this.orderedUuids[column] ? this.orderedUuids[column].length : null));
                     }
