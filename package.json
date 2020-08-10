@@ -28,22 +28,22 @@
   },
   "homepage": "https://github.com/paulleduc/bookshelf-prefixed-ordered-uuid#readme",
   "engines": {
-    "node": ">= 4"
+    "node": ">= 8"
   },
   "dependencies": {
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.15",
     "ordered-uuid": "^1.1.0"
   },
   "devDependencies": {
-    "bookshelf": ">=0.0.0",
+    "bookshelf": "^1.2.0",
     "codeclimate-test-reporter": "^0.5.1",
     "jest": "^26.3.0",
-    "knex": ">=0.6.10",
+    "knex": "^0.21.4",
     "sqlite": "^4.0.14",
     "sqlite3": "^5.0.0"
   },
   "peerDependencies": {
-    "bookshelf": "1.x.x"
+    "bookshelf": "x.x.x"
   },
   "main": "index.js",
   "scripts": {
