@@ -6,7 +6,6 @@ let knex = require('knex')(config.development)
 let bookshelf = require('bookshelf')(knex)
 
 // Install all necessary plugins
-bookshelf.plugin('registry')
 bookshelf.plugin(require('../../'))
 
 module.exports = {
