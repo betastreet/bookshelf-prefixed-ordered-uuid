@@ -1,6 +1,6 @@
 {
   "name": "bookshelf-prefixed-ordered-uuid",
-  "version": "2.0.8",
+  "version": "3.0.0",
   "description": "Support ordered UUID's prefixed with a string as properties for your Bookshelf models.",
   "repository": {
     "type": "git",
@@ -28,22 +28,22 @@
   },
   "homepage": "https://github.com/paulleduc/bookshelf-prefixed-ordered-uuid#readme",
   "engines": {
-    "node": ">= 4"
+    "node": ">= 8"
   },
   "dependencies": {
-    "lodash": "^4.17.4",
-    "ordered-uuid": "^1.0.0"
+    "lodash": "^4.17.15",
+    "ordered-uuid": "^1.1.0"
   },
   "devDependencies": {
-    "bookshelf": ">=0.0.0 <1.0.0",
-    "codeclimate-test-reporter": "^0.4.0",
-    "jest": "^16.0.2",
-    "knex": ">=0.6.10 <0.12.0",
-    "sqlite": "^2.2.4",
-    "sqlite3": "^3.1.8"
+    "bookshelf": "^1.2.0",
+    "codeclimate-test-reporter": "^0.5.1",
+    "jest": "^27.0.6",
+    "knex": "^0.95.6",
+    "sqlite": "^4.0.23",
+    "sqlite3": "^5.0.2"
   },
   "peerDependencies": {
-    "bookshelf": "0.x.x"
+    "bookshelf": "^1.x.x"
   },
   "main": "index.js",
   "scripts": {

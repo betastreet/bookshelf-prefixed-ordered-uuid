@@ -1,7 +1,6 @@
 'use strict'
 
 const OrderedUUID = require('ordered-uuid');
-const collection = require('./collection.js');
 
 /**
  * A function that can be used as a plugin for bookshelf
@@ -22,6 +21,10 @@ module.exports = (bookshelf) => {
         if (Buffer.isBuffer(uuid) && uuid.length === 16 + orderedUuidPrefixLength) {
             return uuid;
         }
+        if ((Buffer.isBuffer(uuid) && uuid.length !== 16)
+          || (!Buffer.isBuffer(uuid) && !/^[A-Z]{2}[a-z0-9]{32}$/.test(uuid))) {
+            throw new Error('Invalid UUID to convert: ' + uuid);
+        }
         try {
             if (orderedUuidPrefixLength) {
                 const prefix = uuid.substring(0, orderedUuidPrefixLength || 2);
@@ -37,6 +40,8 @@ module.exports = (bookshelf) => {
     bookshelf.Model.binaryToPrefixedUuid = function (buff, orderedUuidPrefixLength) {
         if (typeof(buff) === 'string' && buff.length === 32 + orderedUuidPrefixLength) {
             return buff;
+        } else if (!Buffer.isBuffer(buff) || buff.length !== 16 + (orderedUuidPrefixLength || 2)) {
+            throw new Error('Invalid binary UUID to convert: ' + buff);
         }
         try {
             if (orderedUuidPrefixLength) {
@@ -46,21 +51,13 @@ module.exports = (bookshelf) => {
             }
             return buff.toString('hex');
         } catch (err) {
-            throw new Error('Invalid binary UUID to convert.');
+            throw new Error('Invalid binary UUID to convert.' + buff);
         }
     };
 
     bookshelf.Model.prefixedUuidRegex = function (orderedUuidPrefix) {
         return new RegExp('^' + (orderedUuidPrefix || '') + '[a-z0-9]{32}$');
     };
-
-    bookshelf.Collection.prototype._reset = collection.prototype._reset;
-
-    bookshelf.Collection.prototype.set = collection.prototype.set;
-
-    bookshelf.Collection.prototype.remove = collection.prototype.remove;
-
-    bookshelf.Collection.prototype.get = collection.prototype.get;
 
     // Extends the default model class
     bookshelf.Model = bookshelf.Model.extend({
@@ -111,7 +108,7 @@ module.exports = (bookshelf) => {
             // this switches update fields with the applicable converted values
             if (attrs && typeof attrs === 'object') {
                 Object.keys(this.orderedUuids).forEach((column) => {
-                    if (attrs.hasOwnProperty(column)) {
+                    if (Object.hasOwnProperty.bind(attrs)(column)) {
                         attrs[column] = bookshelf.Model.prefixedUuidToBinary(attrs[column],
                             (this.orderedUuids[column] ? this.orderedUuids[column].length : null));
                     }
@@ -127,7 +124,7 @@ module.exports = (bookshelf) => {
         },
 
         readCollectionDefaults: function (collection) {
-            collection.each(function (model) {
+            collection.forEach(function (model) {
                 model.readDefaults();
             });
         },
