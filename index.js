@@ -15,7 +15,7 @@ module.exports = (bookshelf) => {
     };
 
     bookshelf.Model.prefixedUuidToBinary = function (uuid, orderedUuidPrefixLength) {
-        if (uuid === null) {
+        if (uuid === null || uuid === undefined) {
             return null;
         }
         if (Buffer.isBuffer(uuid) && uuid.length === 16 + orderedUuidPrefixLength) {

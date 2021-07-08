@@ -43,7 +43,7 @@
     "sqlite3": "^5.0.2"
   },
   "peerDependencies": {
-    "bookshelf": "x.x.x"
+    "bookshelf": "^1.x.x"
   },
   "main": "index.js",
   "scripts": {
