@@ -2,7 +2,7 @@
 
 const bookshelf = require('../').bookshelf;
 
-exports.seed = (knex, Promise) => {
+exports.seed = (knex) => {
     let articles = [
         {
             id: bookshelf.Model.prefixedUuidToBinary(bookshelf.Model.generateUuid('AR'), 2),
@@ -24,8 +24,8 @@ exports.seed = (knex, Promise) => {
         }
     ];
 
-    return Promise.join(
+    return Promise.all([
         knex('articles').del(),
         knex('articles').insert(articles)
-    );
+    ]);
 }

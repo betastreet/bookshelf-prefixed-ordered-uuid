@@ -21,6 +21,10 @@ module.exports = (bookshelf) => {
         if (Buffer.isBuffer(uuid) && uuid.length === 16 + orderedUuidPrefixLength) {
             return uuid;
         }
+        if ((Buffer.isBuffer(uuid) && uuid.length !== 16)
+          || (!Buffer.isBuffer(uuid) && !/^[A-Z]{2}[a-z0-9]{32}$/.test(uuid))) {
+            throw new Error('Invalid UUID to convert: ' + uuid);
+        }
         try {
             if (orderedUuidPrefixLength) {
                 const prefix = uuid.substring(0, orderedUuidPrefixLength || 2);
@@ -36,6 +40,8 @@ module.exports = (bookshelf) => {
     bookshelf.Model.binaryToPrefixedUuid = function (buff, orderedUuidPrefixLength) {
         if (typeof(buff) === 'string' && buff.length === 32 + orderedUuidPrefixLength) {
             return buff;
+        } else if (!Buffer.isBuffer(buff) || buff.length !== 16 + (orderedUuidPrefixLength || 2)) {
+            throw new Error('Invalid binary UUID to convert: ' + buff);
         }
         try {
             if (orderedUuidPrefixLength) {
