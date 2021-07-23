@@ -22,7 +22,7 @@ module.exports = (bookshelf) => {
             return uuid;
         }
         if ((Buffer.isBuffer(uuid) && uuid.length !== 16)
-          || (!Buffer.isBuffer(uuid) && !/^[A-Z]{2}[a-z0-9]{32}$/.test(uuid))) {
+          || (!Buffer.isBuffer(uuid) && !/^[A-Z-]{2}[a-z0-9]{32}$/.test(uuid))) {
             throw new Error('Invalid UUID to convert: ' + uuid);
         }
         try {
